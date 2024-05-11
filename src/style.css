@@ -12,3 +12,7 @@
 .cm-scroller {
     border-radius: inherit;
 }
+
+#result .cm-cursor {
+    display: none;
+}

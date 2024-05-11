@@ -1,13 +1,14 @@
 <script lang="ts">
   import { javascript } from "@codemirror/lang-javascript";
   import {
+    EditorView,
     drawSelection,
     highlightActiveLineGutter,
     lineNumbers,
     placeholder,
   } from "@codemirror/view";
+  import { EditorState } from "@codemirror/state";
   import { highlightSelectionMatches } from "@codemirror/search";
-  import { EditorView } from "codemirror";
   import { onMount } from "svelte";
   import * as stp from "./stp";
   import Checkbox from "./Checkbox.svelte";
@@ -47,7 +48,7 @@
         highlightSelectionMatches(),
         lineNumbers(),
         EditorView.lineWrapping,
-        EditorView.editable.of(false),
+        EditorState.readOnly.of(true),
       ],
     });
   });
