@@ -89,6 +89,18 @@
   const clear = () => {
     data.dispatch({ changes: { from: 0, to: data.state.doc.length } });
     result.dispatch({ changes: { from: 0, to: result.state.doc.length } });
+    trimSpace = false;
+    cutSpace = false;
+    removeParentheses = false;
+    trim = false;
+    trimCutset = "";
+    cut = false;
+    cutSep = "";
+    removeByRegExp = false;
+    re = "";
+    s2t = false;
+    t2s = false;
+    localStorage.clear();
   };
 
   const copy = async () => {
