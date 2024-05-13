@@ -65,7 +65,7 @@ export class trim implements textProcessor {
   }
 }
 
-class processor implements textProcessor {
+export class processor implements textProcessor {
   isOnce: boolean
   fn: (s: string) => string
   constructor(once: boolean, fn: (s: string) => string) {

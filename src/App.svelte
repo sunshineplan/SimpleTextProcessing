@@ -23,7 +23,16 @@
   let cutSep = "";
   let removeByRegExp = false;
   let re = "";
-  let loading = false;
+  let loading = true;
+  let s2t = false;
+  let t2s = false;
+  let s2tp: stp.processor, t2sp: stp.processor;
+
+  const initOpenCC = () => {
+    s2tp = new stp.processor(true, OpenCC.Converter({ from: "cn", to: "t" }));
+    t2sp = new stp.processor(true, OpenCC.Converter({ from: "t", to: "cn" }));
+    loading = false;
+  };
 
   onMount(() => {
     data = new EditorView({
@@ -61,6 +70,8 @@
     if (trim) task.append(new stp.trim(trimCutset));
     if (cut) task.append(new stp.cut(cutSep));
     if (removeByRegExp) task.append(new stp.removeByRegExp(new RegExp(re)));
+    if (s2t) task.append(s2tp);
+    else if (t2s) task.append(t2sp);
     loading = true;
     const process = processing();
     const r = task.processAll(data.state.doc.toString().split("\n"));
@@ -112,6 +123,14 @@
     localStorage.setItem("data", data.state.doc.toString())}
 />
 
+<svelte:head>
+  <script
+    src="https://cdn.jsdelivr.net/npm/opencc-js@1/dist/umd/full.min.js"
+    on:load={initOpenCC}
+  >
+  </script>
+</svelte:head>
+
 <header class="navbar navbar-expand navbar-light flex-column flex-md-row">
   <a
     class="navbar-brand text-primary m-0 mr-md-3"
@@ -130,6 +149,33 @@
       <Checkbox id="TrimSpace" bind:checked={trimSpace} />
       <Checkbox id="CutSpace" bind:checked={cutSpace} />
       <Checkbox id="RemoveParentheses" bind:checked={removeParentheses} />
+      <br />
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          checked={t2s}
+          id="t2s"
+          on:click={() => {
+            t2s = !t2s;
+            if (t2s) s2t = false;
+          }}
+        />
+        <label class="form-check-label" for="t2s">繁 → 简</label>
+      </div>
+      <div class="form-check">
+        <input
+          class="form-check-input"
+          type="checkbox"
+          checked={s2t}
+          id="s2t"
+          on:click={() => {
+            s2t = !s2t;
+            if (s2t) t2s = false;
+          }}
+        />
+        <label class="form-check-label" for="s2t">简 → 繁</label>
+      </div>
       <br />
       <Checkbox
         id="Trim"
