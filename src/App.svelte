@@ -231,7 +231,7 @@
       <button
         on:click={clear}
         type="button"
-        class="btn btn-primary w-100"
+        class="btn btn-danger w-100"
         disabled={loading}
       >
         Clear
