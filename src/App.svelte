@@ -72,6 +72,10 @@
     if (removeByRegExp) task.append(new stp.removeByRegExp(new RegExp(re)));
     if (s2t) task.append(s2tp);
     else if (t2s) task.append(t2sp);
+    if (!task.tasks.length) {
+      alert("No option selected.")
+      return
+    }
     loading = true;
     const process = processing();
     const r = task.processAll(data.state.doc.toString().split("\n"));
@@ -87,6 +91,7 @@
   };
 
   const clear = () => {
+    if (!confirm("Clear all data and options?")) return;
     data.dispatch({ changes: { from: 0, to: data.state.doc.length } });
     result.dispatch({ changes: { from: 0, to: result.state.doc.length } });
     trimSpace = false;
