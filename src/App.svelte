@@ -1,14 +1,7 @@
 <script lang="ts">
-  import { javascript } from "@codemirror/lang-javascript";
-  import {
-    EditorView,
-    drawSelection,
-    highlightActiveLineGutter,
-    lineNumbers,
-    placeholder,
-  } from "@codemirror/view";
+  import { placeholder } from "@codemirror/view";
   import { EditorState } from "@codemirror/state";
-  import { highlightSelectionMatches } from "@codemirror/search";
+  import { EditorView, basicSetup } from "codemirror";
   import { onMount } from "svelte";
   import * as stp from "./stp";
   import Checkbox from "./Checkbox.svelte";
@@ -39,11 +32,7 @@
       doc: localStorage.getItem("data") || "",
       parent: document.getElementById("input")!,
       extensions: [
-        javascript(),
-        drawSelection(),
-        highlightActiveLineGutter(),
-        highlightSelectionMatches(),
-        lineNumbers(),
+        basicSetup,
         placeholder("Paste content here..."),
         EditorView.lineWrapping,
       ],
@@ -52,10 +41,7 @@
       doc: "",
       parent: document.getElementById("result")!,
       extensions: [
-        javascript(),
-        drawSelection(),
-        highlightSelectionMatches(),
-        lineNumbers(),
+        basicSetup,
         EditorView.lineWrapping,
         EditorState.readOnly.of(true),
       ],
