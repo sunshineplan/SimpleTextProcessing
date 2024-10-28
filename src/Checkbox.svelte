@@ -1,8 +1,15 @@
 <script lang="ts">
-  export let id: string;
-  export let placeholder: string = "";
-  export let checked: boolean;
-  export let optional: string | null = null;
+  let {
+    id,
+    placeholder = "",
+    checked = $bindable(),
+    optional = $bindable(null),
+  }: {
+    id: string;
+    placeholder?: string;
+    checked: boolean;
+    optional?: string | null;
+  } = $props();
 </script>
 
 {#if optional !== null}
@@ -29,7 +36,7 @@
         id={id + placeholder}
         {placeholder}
         bind:value={optional}
-        on:input={() => {
+        oninput={() => {
           if (optional === "") checked = false;
           else if (!checked) checked = true;
         }}

@@ -6,19 +6,20 @@
   import * as stp from "./stp";
   import Checkbox from "./Checkbox.svelte";
 
+  let trimSpace = $state(false);
+  let cutSpace = $state(false);
+  let removeParentheses = $state(false);
+  let trim = $state(false);
+  let trimCutset = $state("");
+  let cut = $state(false);
+  let cutSep = $state("");
+  let removeByRegExp = $state(false);
+  let re = $state("");
+  let loading = $state(true);
+  let s2t = $state(false);
+  let t2s = $state(false);
+
   let data: EditorView, result: EditorView;
-  let trimSpace = false;
-  let cutSpace = false;
-  let removeParentheses = false;
-  let trim = false;
-  let trimCutset = "";
-  let cut = false;
-  let cutSep = "";
-  let removeByRegExp = false;
-  let re = "";
-  let loading = true;
-  let s2t = false;
-  let t2s = false;
   let s2tp: stp.processor, t2sp: stp.processor;
 
   const initOpenCC = () => {
@@ -59,8 +60,8 @@
     if (s2t) task.append(s2tp);
     else if (t2s) task.append(t2sp);
     if (!task.tasks.length) {
-      alert("No option selected.")
-      return
+      alert("No option selected.");
+      return;
     }
     loading = true;
     const process = processing();
@@ -122,14 +123,13 @@
 </script>
 
 <svelte:window
-  on:beforeunload={() =>
-    localStorage.setItem("data", data.state.doc.toString())}
+  onbeforeunload={() => localStorage.setItem("data", data.state.doc.toString())}
 />
 
 <svelte:head>
   <script
     src="https://cdn.jsdelivr.net/npm/opencc-js@1/dist/umd/full.min.js"
-    on:load={initOpenCC}
+    onload={initOpenCC}
   >
   </script>
 </svelte:head>
@@ -159,7 +159,7 @@
           type="checkbox"
           checked={t2s}
           id="t2s"
-          on:click={() => {
+          onclick={() => {
             t2s = !t2s;
             if (t2s) s2t = false;
           }}
@@ -172,7 +172,7 @@
           type="checkbox"
           checked={s2t}
           id="s2t"
-          on:click={() => {
+          onclick={() => {
             s2t = !s2t;
             if (s2t) t2s = false;
           }}
@@ -200,7 +200,7 @@
       />
       <br />
       <button
-        on:click={process}
+        onclick={process}
         type="button"
         class="btn btn-primary w-100"
         disabled={loading}
@@ -210,7 +210,7 @@
       <br />
       <br />
       <button
-        on:click={copy}
+        onclick={copy}
         type="button"
         class="btn btn-primary w-100"
         disabled={loading}
@@ -220,7 +220,7 @@
       <br />
       <br />
       <button
-        on:click={clear}
+        onclick={clear}
         type="button"
         class="btn btn-danger w-100"
         disabled={loading}

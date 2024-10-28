@@ -1,3 +1,4 @@
+import { expect, test } from 'vitest'
 import * as stp from '../src/stp'
 
 test('Remove By RegExp', () => {
