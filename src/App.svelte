@@ -1,10 +1,10 @@
 <script lang="ts">
-  import { placeholder } from "@codemirror/view";
-  import { EditorState } from "@codemirror/state";
-  import { EditorView, basicSetup } from "codemirror";
+  import Handsontable from "handsontable";
   import { onMount } from "svelte";
   import * as stp from "./stp";
   import Checkbox from "./Checkbox.svelte";
+  import "handsontable/styles/handsontable.min.css";
+  import "handsontable/styles/ht-theme-main.min.css";
 
   let trimSpace = $state(false);
   let cutSpace = $state(false);
@@ -19,7 +19,7 @@
   let s2t = $state(false);
   let t2s = $state(false);
 
-  let data: EditorView, result: EditorView;
+  let data: Handsontable, result: Handsontable;
   let s2tp: stp.processor, t2sp: stp.processor;
 
   const initOpenCC = () => {
@@ -28,26 +28,73 @@
     loading = false;
   };
 
+  const create_table = (
+    parent: HTMLElement,
+    col: string,
+    doc: string,
+    readOnly: boolean,
+  ) => {
+    let data: any[][] | undefined;
+    try {
+      data = JSON.parse(doc);
+    } catch (e) {
+      data = undefined;
+    }
+    return new Handsontable(parent, {
+      data,
+      colHeaders: [col],
+      colWidths() {
+        return Math.floor((window.innerWidth * 5) / 12) - 50 - 24;
+      },
+      contextMenu: [
+        "row_above",
+        "row_below",
+        "---------",
+        "remove_row",
+        "---------",
+        "undo",
+        "redo",
+        "---------",
+        "copy",
+        "cut",
+      ],
+      height() {
+        return window.innerHeight - 80 - 16;
+      },
+      maxCols: 1,
+      minSpareRows: readOnly ? undefined : 1,
+      readOnly,
+      rowHeaders: true,
+      startRows: 1,
+      tabMoves: { row: 1, col: 0 },
+      themeName: "ht-theme-main",
+      licenseKey: "non-commercial-and-evaluation",
+    });
+  };
+
   onMount(() => {
-    data = new EditorView({
-      doc: localStorage.getItem("data") || "",
-      parent: document.getElementById("input")!,
-      extensions: [
-        basicSetup,
-        placeholder("Paste content here..."),
-        EditorView.lineWrapping,
-      ],
-    });
-    result = new EditorView({
-      doc: "",
-      parent: document.getElementById("result")!,
-      extensions: [
-        basicSetup,
-        EditorView.lineWrapping,
-        EditorState.readOnly.of(true),
-      ],
-    });
+    data = create_table(
+      document.getElementById("input")!,
+      "Data",
+      localStorage.getItem("data") || "",
+      false,
+    );
+    result = create_table(
+      document.getElementById("result")!,
+      "Result",
+      "",
+      true,
+    );
   });
+
+  const getData = (table: Handsontable) => {
+    return table
+      .getData()
+      .map((i) => {
+        return i[0];
+      })
+      .filter((i) => i !== null);
+  };
 
   const process = () => {
     const task = new stp.tasks();
@@ -64,23 +111,15 @@
       return;
     }
     loading = true;
-    const process = processing();
-    const r = task.processAll(data.state.doc.toString().split("\n"));
-    clearInterval(process);
-    result.dispatch({
-      changes: {
-        from: 0,
-        to: result.state.doc.length,
-        insert: r.join("\n"),
-      },
-    });
+    const r = task.processAll(getData(data));
+    result.loadData(r.map((i) => [i]));
     loading = false;
   };
 
   const clear = () => {
     if (!confirm("Clear all data and options?")) return;
-    data.dispatch({ changes: { from: 0, to: data.state.doc.length } });
-    result.dispatch({ changes: { from: 0, to: result.state.doc.length } });
+    data.loadData([[""]]);
+    result.loadData([[""]]);
     trimSpace = false;
     cutSpace = false;
     removeParentheses = false;
@@ -96,7 +135,7 @@
   };
 
   const copy = async () => {
-    const res = result.state.doc.toString();
+    const res = getData(result).join("\n");
     if (res.trim() !== "")
       if (navigator.clipboard) {
         await navigator.clipboard.writeText(res.trim());
@@ -104,26 +143,11 @@
       } else
         alert("This function requires a secure origin. (HTTPS or localhost)");
   };
-
-  const processing = () => {
-    return setInterval(() => {
-      const s = result.state.doc.toString().split("Processing");
-      let dots = s.length >= 2 ? s[1].length : 0;
-      if (dots < 3) dots++;
-      else dots -= 3;
-      result.dispatch({
-        changes: {
-          from: 0,
-          to: result.state.doc.length,
-          insert: "Processing" + ".".repeat(dots),
-        },
-      });
-    }, 200);
-  };
 </script>
 
 <svelte:window
-  onbeforeunload={() => localStorage.setItem("data", data.state.doc.toString())}
+  onbeforeunload={() =>
+    localStorage.setItem("data", JSON.stringify(data.getData()))}
 />
 
 <svelte:head>
@@ -145,9 +169,7 @@
 </header>
 <div class="container-fluid">
   <div class="row h-100">
-    <div id="input" class="col-5 h-100">
-      <label for="input">Data</label>
-    </div>
+    <div id="input" class="col-5"></div>
     <div class="col-2 p-0 pt-5">
       <Checkbox id="TrimSpace" bind:checked={trimSpace} />
       <Checkbox id="CutSpace" bind:checked={cutSpace} />
@@ -228,9 +250,7 @@
         Clear
       </button>
     </div>
-    <div id="result" class="col-5 h-100">
-      <label for="result">Result</label>
-    </div>
+    <div id="result" class="col-5"></div>
   </div>
 </div>
 
@@ -244,5 +264,11 @@
   .container-fluid {
     position: fixed;
     height: calc(100% - 80px);
+  }
+
+  #input,
+  #result {
+    outline: 1px solid var(--ht-border-color);
+    outline-offset: -1px;
   }
 </style>
