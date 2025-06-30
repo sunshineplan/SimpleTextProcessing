@@ -40,13 +40,29 @@
     } catch (e) {
       data = undefined;
     }
-    return new Handsontable(parent, {
-      data,
+    const options: Handsontable.GridSettings = {
       colHeaders: [col],
       colWidths() {
         return Math.floor((window.innerWidth * 5) / 12) - 50 - 24;
       },
-      contextMenu: [
+      height() {
+        return window.innerHeight - 80 - 16;
+      },
+      maxCols: 1,
+      rowHeaders: true,
+      startRows: 1,
+      tabMoves: { row: 1, col: 0 },
+      themeName: "ht-theme-main",
+      licenseKey: "non-commercial-and-evaluation",
+    };
+    if (readOnly) {
+      options.readOnly = true;
+      options.readOnlyCellClassName = "";
+      options.contextMenu = ["copy"];
+    } else {
+      options.data = data;
+      options.minSpareRows = 1;
+      options.contextMenu = [
         "row_above",
         "row_below",
         "---------",
@@ -57,19 +73,9 @@
         "---------",
         "copy",
         "cut",
-      ],
-      height() {
-        return window.innerHeight - 80 - 16;
-      },
-      maxCols: 1,
-      minSpareRows: readOnly ? undefined : 1,
-      readOnly,
-      rowHeaders: true,
-      startRows: 1,
-      tabMoves: { row: 1, col: 0 },
-      themeName: "ht-theme-main",
-      licenseKey: "non-commercial-and-evaluation",
-    });
+      ];
+    }
+    return new Handsontable(parent, options);
   };
 
   onMount(() => {
@@ -79,6 +85,14 @@
       localStorage.getItem("data") || "",
       false,
     );
+    data.addHook("afterPaste", (values) => {
+      for (let i = values.length - 1; i >= 0; i--)
+        if (values[i][0] !== "") {
+          data.loadData(values.slice(0, i + 1));
+          return;
+        }
+      data.loadData([[""]]);
+    });
     result = create_table(
       document.getElementById("result")!,
       "Result",
