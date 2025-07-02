@@ -29,22 +29,24 @@
   };
 
   const create_table = (
-    parent: HTMLElement,
-    col: string,
-    doc: string,
+    element: HTMLElement,
+    name: string,
+    text: string,
     readOnly: boolean,
   ) => {
     let data: any[][] | undefined;
     try {
-      data = JSON.parse(doc);
+      data = JSON.parse(text);
     } catch (e) {
       data = undefined;
     }
     const options: Handsontable.GridSettings = {
-      colHeaders: [col],
+      autoColumnSize: false,
+      colHeaders: [name],
       colWidths() {
         return Math.floor((window.innerWidth * 5) / 12) - 50 - 24;
       },
+      columnSorting: false,
       height() {
         return window.innerHeight - 80 - 16;
       },
@@ -75,7 +77,7 @@
         "cut",
       ];
     }
-    return new Handsontable(parent, options);
+    return new Handsontable(element, options);
   };
 
   onMount(() => {
@@ -85,7 +87,9 @@
       localStorage.getItem("data") || "",
       false,
     );
+    data.addHook("beforePaste", () => data.updateSettings({ readOnly: true }));
     data.addHook("afterPaste", (values) => {
+      data.updateSettings({ readOnly: false });
       for (let i = values.length - 1; i >= 0; i--)
         if (values[i][0] !== "") {
           data.loadData(values.slice(0, i + 1));
@@ -102,12 +106,7 @@
   });
 
   const getData = (table: Handsontable) => {
-    return table
-      .getData()
-      .map((i) => {
-        return i[0];
-      })
-      .filter((i) => i !== null);
+    return table.getDataAtCol(0).filter((i) => i !== null);
   };
 
   const process = () => {
