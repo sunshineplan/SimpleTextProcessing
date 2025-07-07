@@ -1,10 +1,12 @@
 <script lang="ts">
   import Handsontable from "handsontable";
-  import { onMount } from "svelte";
-  import * as stp from "./stp";
-  import Checkbox from "./Checkbox.svelte";
   import "handsontable/styles/handsontable.min.css";
   import "handsontable/styles/ht-theme-main.min.css";
+  import { onMount } from "svelte";
+  import Checkbox from "./Checkbox.svelte";
+  import * as stp from "./stp";
+
+  const rowHeaderWidth = 64;
 
   let trimSpace = $state(false);
   let cutSpace = $state(false);
@@ -44,7 +46,7 @@
       autoColumnSize: false,
       colHeaders: [name],
       colWidths() {
-        return Math.floor((window.innerWidth * 5) / 12) - 50 - 24;
+        return Math.floor((window.innerWidth * 5) / 12) - rowHeaderWidth - 24;
       },
       columnSorting: false,
       height() {
@@ -52,6 +54,7 @@
       },
       maxCols: 1,
       rowHeaders: true,
+      rowHeaderWidth,
       startRows: 1,
       tabMoves: { row: 1, col: 0 },
       themeName: "ht-theme-main",
@@ -77,7 +80,23 @@
         "cut",
       ];
     }
-    return new Handsontable(element, options);
+    const table = new Handsontable(element, options);
+    if (!readOnly) {
+      table.addHook("beforePaste", () =>
+        table.updateSettings({ readOnly: true }),
+      );
+      table.addHook("afterPaste", (data) => {
+        table.updateSettings({ readOnly: false });
+        table.deselectCell();
+        for (let i = data.length - 1; i >= 0; i--)
+          if (data[i][0] !== "") {
+            table.loadData(data.slice(0, i + 1));
+            return;
+          }
+        table.loadData([[""]]);
+      });
+    }
+    return table;
   };
 
   onMount(() => {
@@ -87,16 +106,6 @@
       localStorage.getItem("data") || "",
       false,
     );
-    data.addHook("beforePaste", () => data.updateSettings({ readOnly: true }));
-    data.addHook("afterPaste", (values) => {
-      data.updateSettings({ readOnly: false });
-      for (let i = values.length - 1; i >= 0; i--)
-        if (values[i][0] !== "") {
-          data.loadData(values.slice(0, i + 1));
-          return;
-        }
-      data.loadData([[""]]);
-    });
     result = create_table(
       document.getElementById("result")!,
       "Result",
