@@ -1,10 +1,20 @@
 <script lang="ts">
-  import Handsontable from "handsontable";
+  import Handsontable from "handsontable/base";
+  import {
+    AutoColumnSize,
+    ContextMenu,
+    CopyPaste,
+    registerPlugin,
+  } from "handsontable/plugins";
   import "handsontable/styles/handsontable.min.css";
   import "handsontable/styles/ht-theme-main.min.css";
   import { onMount } from "svelte";
   import Checkbox from "./Checkbox.svelte";
   import * as stp from "./stp";
+
+  registerPlugin(AutoColumnSize);
+  registerPlugin(ContextMenu);
+  registerPlugin(CopyPaste);
 
   const rowHeaderWidth = 64;
 
@@ -31,24 +41,19 @@
   };
 
   const create_table = (
-    element: HTMLElement,
+    elementId: string,
     name: string,
-    text: string,
-    readOnly: boolean,
+    key: string,
+    readOnly?: boolean,
   ) => {
-    let data: any[][] | undefined;
-    try {
-      data = JSON.parse(text);
-    } catch (e) {
-      data = undefined;
-    }
     const options: Handsontable.GridSettings = {
       autoColumnSize: false,
       colHeaders: [name],
       colWidths() {
-        return Math.floor((window.innerWidth * 5) / 12) - rowHeaderWidth - 24;
+        return Math.round(
+          window.innerWidth * 0.4166666667 - rowHeaderWidth - 24,
+        );
       },
-      columnSorting: false,
       height() {
         return window.innerHeight - 80 - 16;
       },
@@ -65,7 +70,11 @@
       options.readOnlyCellClassName = "";
       options.contextMenu = ["copy"];
     } else {
-      options.data = data;
+      try {
+        options.data = JSON.parse(localStorage.getItem(key) || "");
+      } catch (e) {
+        options.data = undefined;
+      }
       options.minSpareRows = 1;
       options.contextMenu = [
         "row_above",
@@ -80,7 +89,10 @@
         "cut",
       ];
     }
-    const table = new Handsontable(element, options);
+    const table = new Handsontable(
+      document.getElementById(elementId)!,
+      options,
+    );
     if (!readOnly) {
       table.addHook("beforePaste", () =>
         table.updateSettings({ readOnly: true }),
@@ -100,18 +112,8 @@
   };
 
   onMount(() => {
-    data = create_table(
-      document.getElementById("input")!,
-      "Data",
-      localStorage.getItem("data") || "",
-      false,
-    );
-    result = create_table(
-      document.getElementById("result")!,
-      "Result",
-      "",
-      true,
-    );
+    data = create_table("input", "Data", "data");
+    result = create_table("result", "Result", "", true);
   });
 
   const getData = (table: Handsontable) => {
