@@ -162,7 +162,7 @@
     const res = getData(result).join("\n");
     if (res.trim() !== "")
       if (navigator.clipboard) {
-        await navigator.clipboard.writeText(res.trim());
+        await navigator.clipboard.writeText(res.trimEnd());
         alert("Text has been copied to clipboard.");
       } else
         alert("This function requires a secure origin. (HTTPS or localhost)");
@@ -288,11 +288,5 @@
   .container-fluid {
     position: fixed;
     height: calc(100% - 80px);
-  }
-
-  #input,
-  #result {
-    outline: 1px solid var(--ht-border-color);
-    outline-offset: -1px;
   }
 </style>
