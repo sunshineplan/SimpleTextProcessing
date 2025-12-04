@@ -26,7 +26,9 @@
   let cut = $state(false);
   let cutSep = $state("");
   let removeByRegExp = $state(false);
-  let re = $state("");
+  let remove = $state("");
+  let extractByRegExp = $state(false);
+  let extract = $state("");
   let loading = $state(true);
   let s2t = $state(false);
   let t2s = $state(false);
@@ -127,7 +129,9 @@
     if (removeParentheses) task.append(...stp.removeParentheses.tasks);
     if (trim) task.append(new stp.trim(trimCutset));
     if (cut) task.append(new stp.cut(cutSep));
-    if (removeByRegExp) task.append(new stp.removeByRegExp(new RegExp(re)));
+    if (removeByRegExp) task.append(new stp.removeByRegExp(new RegExp(remove)));
+    if (extractByRegExp)
+      task.append(new stp.extractByRegExp(new RegExp(extract)));
     if (s2t) task.append(s2tp);
     else if (t2s) task.append(t2sp);
     if (!task.tasks.length) {
@@ -152,7 +156,9 @@
     cut = false;
     cutSep = "";
     removeByRegExp = false;
-    re = "";
+    remove = "";
+    extractByRegExp = false;
+    extract = "";
     s2t = false;
     t2s = false;
     localStorage.clear();
@@ -242,7 +248,13 @@
         id="Remove"
         placeholder="RegExp"
         bind:checked={removeByRegExp}
-        bind:optional={re}
+        bind:optional={remove}
+      />
+      <Checkbox
+        id="Extract"
+        placeholder="RegExp"
+        bind:checked={extractByRegExp}
+        bind:optional={extract}
       />
       <br />
       <button

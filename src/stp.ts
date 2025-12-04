@@ -39,6 +39,18 @@ export class removeByRegExp implements textProcessor {
   }
 }
 
+export class extractByRegExp implements textProcessor {
+  re: RegExp;
+  constructor(re: RegExp) {
+    this.re = re;
+  }
+  once() { return false }
+  process(s: string): string {
+    const match = s.match(this.re);
+    return match ? match[0] : "";
+  }
+}
+
 export class cut implements textProcessor {
   sep: string
   constructor(sep: string) {
