@@ -16,7 +16,7 @@
     "@vitest/coverage-v8": "^4.0.16",
     "handsontable": "^16.2.0",
     "svelte": "^5.46.0",
-    "svelte-check": "^4.3.4",
+    "svelte-check": "^4.3.5",
     "ts-node": "^10.9.2",
     "tslib": "^2.8.1",
     "typescript": "^5.9.3",
