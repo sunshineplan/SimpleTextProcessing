@@ -13,7 +13,7 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
     "@tsconfig/svelte": "^5.0.8",
-    "@vitest/coverage-v8": "^4.1.1",
+    "@vitest/coverage-v8": "^4.1.2",
     "handsontable": "^17.0.1",
     "svelte": "^5.55.0",
     "svelte-check": "^4.4.5",
