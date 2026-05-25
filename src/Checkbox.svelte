@@ -1,11 +1,13 @@
 <script lang="ts">
   let {
     id,
+    name,
     placeholder = "",
     checked = $bindable(),
     optional = $bindable(null),
   }: {
     id: string;
+    name: string;
     placeholder?: string;
     checked: boolean;
     optional?: string | null;
@@ -23,7 +25,7 @@
           {id}
           disabled={optional === ""}
         />
-        <label class="form-check-label" for={id}>{id}</label>
+        <label class="form-check-label" for={id}>{name}</label>
       </div>
     </div>
     <div class="col">
@@ -46,7 +48,7 @@
 {:else}
   <div class="form-check">
     <input class="form-check-input" type="checkbox" bind:checked {id} />
-    <label class="form-check-label" for={id}>{id}</label>
+    <label class="form-check-label" for={id}>{name}</label>
   </div>
 {/if}
 

@@ -8,6 +8,8 @@
   } from "handsontable/plugins";
   import "handsontable/styles/handsontable.min.css";
   import "handsontable/styles/ht-theme-main.min.css";
+  import i18next from "i18next";
+  import LanguageDetector from "i18next-browser-languagedetector";
   import { onMount } from "svelte";
   import Checkbox from "./Checkbox.svelte";
   import * as stp from "./stp";
@@ -35,6 +37,35 @@
 
   let data: Handsontable, result: Handsontable;
   let s2tp: stp.processor, t2sp: stp.processor;
+
+  i18next.use(LanguageDetector).init({
+    detection: {
+      order: ["querystring", "navigator"],
+      lookupQuerystring: "lang",
+    },
+    //debug: true,
+    resources: {
+      zh: {
+        translation: {
+          Data: "输入",
+          Result: "输出",
+          TrimSpace: "修剪空格",
+          CutSpace: "切割空格",
+          RemoveParentheses: "删除圆括号",
+          Trim: "修剪",
+          Cut: "切割",
+          Remove: "删除",
+          Extract: "提取",
+          Cutset: "裁剪字符集",
+          Sep: "分隔符",
+          RegExp: "正则表达式",
+          Process: "处理",
+          "Copy Result": "复制结果",
+          Clear: "清除",
+        },
+      },
+    },
+  });
 
   const initOpenCC = () => {
     s2tp = new stp.processor(true, OpenCC.Converter({ from: "cn", to: "t" }));
@@ -114,8 +145,8 @@
   };
 
   onMount(() => {
-    data = create_table("input", "Data", "data");
-    result = create_table("result", "Result", "", true);
+    data = create_table("input", i18next.t("Data"), "data");
+    result = create_table("result", i18next.t("Result"), "", true);
   });
 
   const getData = (table: Handsontable) => {
@@ -201,9 +232,21 @@
   <div class="row h-100">
     <div id="input" class="col-5"></div>
     <div class="col-2 p-0 pt-5">
-      <Checkbox id="TrimSpace" bind:checked={trimSpace} />
-      <Checkbox id="CutSpace" bind:checked={cutSpace} />
-      <Checkbox id="RemoveParentheses" bind:checked={removeParentheses} />
+      <Checkbox
+        id="TrimSpace"
+        name={i18next.t("TrimSpace")}
+        bind:checked={trimSpace}
+      />
+      <Checkbox
+        id="CutSpace"
+        name={i18next.t("CutSpace")}
+        bind:checked={cutSpace}
+      />
+      <Checkbox
+        id="RemoveParentheses"
+        name={i18next.t("RemoveParentheses")}
+        bind:checked={removeParentheses}
+      />
       <br />
       <div class="form-check">
         <input
@@ -234,25 +277,29 @@
       <br />
       <Checkbox
         id="Trim"
-        placeholder="Cutset"
+        name={i18next.t("Trim")}
+        placeholder={i18next.t("Cutset")}
         bind:checked={trim}
         bind:optional={trimCutset}
       />
       <Checkbox
         id="Cut"
-        placeholder="Sep"
+        name={i18next.t("Cut")}
+        placeholder={i18next.t("Sep")}
         bind:checked={cut}
         bind:optional={cutSep}
       />
       <Checkbox
         id="Remove"
-        placeholder="RegExp"
+        name={i18next.t("Remove")}
+        placeholder={i18next.t("RegExp")}
         bind:checked={removeByRegExp}
         bind:optional={remove}
       />
       <Checkbox
         id="Extract"
-        placeholder="RegExp"
+        name={i18next.t("Extract")}
+        placeholder={i18next.t("RegExp")}
         bind:checked={extractByRegExp}
         bind:optional={extract}
       />
@@ -263,7 +310,7 @@
         class="btn btn-primary w-100"
         disabled={loading}
       >
-        Process
+        {i18next.t("Process")}
       </button>
       <br />
       <br />
@@ -273,7 +320,7 @@
         class="btn btn-primary w-100"
         disabled={loading}
       >
-        Copy Result
+        {i18next.t("Copy Result")}
       </button>
       <br />
       <br />
@@ -283,7 +330,7 @@
         class="btn btn-danger w-100"
         disabled={loading}
       >
-        Clear
+        {i18next.t("Clear")}
       </button>
     </div>
     <div id="result" class="col-5"></div>
@@ -300,5 +347,9 @@
   .container-fluid {
     position: fixed;
     height: calc(100% - 80px);
+  }
+
+  :global(label) {
+    white-space: nowrap;
   }
 </style>

@@ -15,6 +15,8 @@
     "@tsconfig/svelte": "^5.0.8",
     "@vitest/coverage-v8": "^4.1.7",
     "handsontable": "^17.1.0",
+    "i18next": "^26.2.0",
+    "i18next-browser-languagedetector": "^8.2.1",
     "svelte": "^5.55.9",
     "svelte-check": "^4.4.8",
     "ts-node": "^10.9.2",
