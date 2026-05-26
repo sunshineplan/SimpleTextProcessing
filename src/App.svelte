@@ -160,9 +160,26 @@
     if (removeParentheses) task.append(...stp.removeParentheses.tasks);
     if (trim) task.append(new stp.trim(trimCutset));
     if (cut) task.append(new stp.cut(cutSep));
-    if (removeByRegExp) task.append(new stp.removeByRegExp(new RegExp(remove)));
-    if (extractByRegExp)
-      task.append(new stp.extractByRegExp(new RegExp(extract)));
+    if (removeByRegExp) {
+      let re: RegExp;
+      try {
+        re = new RegExp(remove);
+      } catch (e) {
+        alert(e);
+        return;
+      }
+      task.append(new stp.removeByRegExp(re));
+    }
+    if (extractByRegExp) {
+      let re: RegExp;
+      try {
+        re = new RegExp(extract);
+      } catch (e) {
+        alert(e);
+        return;
+      }
+      task.append(new stp.extractByRegExp(re));
+    }
     if (s2t) task.append(s2tp);
     else if (t2s) task.append(t2sp);
     if (!task.tasks.length) {
