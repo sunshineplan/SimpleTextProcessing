@@ -14,7 +14,7 @@
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
     "@tsconfig/svelte": "^5.0.8",
     "@vitest/coverage-v8": "^4.1.9",
-    "handsontable": "^17.1.0",
+    "handsontable": "^18.0.0",
     "i18next": "^26.3.4",
     "i18next-browser-languagedetector": "^8.2.1",
     "svelte": "^5.56.4",
