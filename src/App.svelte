@@ -130,7 +130,7 @@
       table.addHook("beforePaste", () =>
         table.updateSettings({ readOnly: true }),
       );
-      table.addHook("afterPaste", (data) => {
+      table.addHook("afterPaste", (data: string[][]) => {
         table.updateSettings({ readOnly: false });
         table.deselectCell();
         for (let i = data.length - 1; i >= 0; i--)
@@ -150,7 +150,9 @@
   });
 
   const getData = (table: Handsontable) => {
-    return table.getDataAtCol(0).filter((i) => i !== null);
+    return table
+      .getDataAtCol(0)
+      .filter((value): value is string => typeof value === "string");
   };
 
   const process = () => {
