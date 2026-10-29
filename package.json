@@ -16,7 +16,7 @@
     "@vitest/coverage-v8": "^5.0.5",
     "handsontable": "^18.1.2",
     "i18next": "^26.5.10",
-    "i18next-browser-languagedetector": "^8.2.2",
+    "i18next-browser-languagedetector": "^8.2.3",
     "svelte": "^5.57.2",
     "svelte-check": "^4.7.7",
     "ts-node": "^10.9.2",
