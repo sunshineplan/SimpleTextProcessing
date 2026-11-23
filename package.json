@@ -13,11 +13,11 @@
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tsconfig/svelte": "^5.0.9",
-    "@vitest/coverage-v8": "^5.1.0",
+    "@vitest/coverage-v8": "^5.1.1",
     "handsontable": "^18.1.2",
     "i18next": "^27.1.4",
     "i18next-browser-languagedetector": "^8.3.0",
-    "svelte": "^5.57.3",
+    "svelte": "^5.58.1",
     "svelte-check": "^4.7.8",
     "ts-node": "^10.9.2",
     "tslib": "^2.9.1",
